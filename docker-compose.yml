@@ -1,0 +1,35 @@
+services:
+  my-apache:
+    container_name: apache
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+    volumes:
+      - ./login:/var/www/html/
+    networks:
+      - sumayya-network
+    depends_on:
+      - my-mariadb
+
+  my-mariadb:
+    container_name: db
+    image: mariadb
+    restart: on-failure
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: sumayya
+      MARIADB_DATABASE: sumayya_db
+    volumes:
+      - ./mariadb:/docker-entrypoint-initdb.d/
+      - sumayya_volume:/var/lib/mysql
+    networks:
+      - sumayya-network
+
+volumes:
+  sumayya_volume:
+
+networks:
+  sumayya-network:
